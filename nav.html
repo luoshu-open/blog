@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我的导航</title>
+    <style>
+        *{font-family: 宋体;padding:0;margin:0}
+        html,body,#app{height: 100%;height:100%;}
+        body{background: url(http://gdcs.kindpetro.com.cn/dfs/fdfs/file/group3/img/jpg/TTAwLzE4LzUxLw==/CggQ4FoOyrKABkLxAAHKiC163hw111.jpg) no-repeat;background-size: 100% 100%;top:0;left: 0;right: 0;bottom:0;position: fixed}
+        #app{color:#fff;font-size: x-large;}
+        .header{height: 5rem;}
+        .header p{    text-align: center;  font-size: 2rem;  margin-top: 1rem;}
+        #content{width: 80%;height: auto;border:1px dashed #cccccc;padding:20px;display: flex;flex-wrap:wrap;  margin: 0 auto;  }
+        .site div{background-color: rgb(26, 188, 156);border-radius: 50%;text-align: center;cursor: pointer;display: flex;  align-items: center;justify-content: center;margin: 0 auto;}
+        .site{margin-bottom: 30px;}
+        .site div:hover{transition: 0.3s; transform: scale(1.2) rotate(360deg);background-color: rgb(241, 196, 15)}
+        .site div:active{transition: 0.3s; transform: scale(0.8) rotate(360deg);}
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="header">
+            <p>我的导航</p>
+        </div>
+        <div id="content">
+            <div v-for="item in siteData" class="site" :style="{width: websiteSize + 'px'}">
+                <div :style="{width: targetSize + 'px' , height:targetSize + 'px' }" @click="openUrl(item.url)">
+                    {{item.name}}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="http://gdcs.kindpetro.com.cn/dfs/fdfs/file/group3/text/js/TTAwLzE4LzUxLw==/CggQ4FoO0Z2AdFN0AAFPnCeHO9s5826.js"></script>
+<script>
+    //====导航个数，长与高各有几个====
+    var size_x = 5;
+    var size_y = 3;
+
+
+    var siteData = [
+        {url : "http://www.baidu.com" , name : "百度"},
+        {url : "http://css.doyoe.com/" , name : "CSS"},
+        {url : "https://www.jiasuu.com/fanqiang-tizi/" , name : "VPN"},
+        {url : "https://www.cnblogs.com/" , name : "博客园"},
+        {url : "https://www.oschina.net/" , name : "开源中国"},
+        {url : "http://web.36fy.com/" , name : "加速度"},
+        {url : "https://github.com/" , name : "github"},
+        {url : "https://gitee.com/" , name : "码云"},
+    ];
+
+    var v = new Vue({
+        el : "#app",
+        data : {
+            index : 0, //当前第几页
+            siteData : [],//导航数据列表
+            websiteSize: 20,//每个导航的像素
+            targetSize : 20,
+        },
+        methods : {
+            computerSize : function(){
+                var windowWidth = window.innerWidth;
+                var contentWidth = windowWidth * 0.8 - 20;
+                this.websiteSize = contentWidth / size_x;
+                var tmpSize = this.websiteSize * 0.5;
+                this.targetSize = computerTargetSize(windowWidth,tmpSize);
+            },
+            openUrl : function(url){
+                window.open(url);
+            },
+            computerData : function(){
+                //计算第几页该有哪些数据
+                var total = size_x * size_y;
+
+                var data = getData(this.index,total);
+                this.siteData = data;
+            }
+        },
+        mounted : function(){
+            this.computerSize();
+            this.computerData();
+        }
+    });
+
+    /**
+     * 获取分页数据
+     * @param index 索引
+     * @param limit 每页几个
+     */
+    function getData(index,limit){
+        var beginSize = index * limit;
+        var array = new Array();
+        for(var i = 0 ; i < limit ; i ++){
+            var _index = beginSize + i;
+            var tmp = window.siteData[_index];
+            if(typeof(tmp) != 'undefined'){
+                array.push(tmp);
+            }else{
+                break;
+            }
+        }
+        return array;
+    }
+    function computerTargetSize(windowWidth,size){
+        console.log(size)
+        if(size > 100){
+            return 100;
+        }else{
+            return size;
+        }
+    }
+    window.onresize = function(){
+        v.computerSize();
+    };
+
+</script>
+</html>
