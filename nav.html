@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>我的导航</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         *{font-family: 宋体;padding:0;margin:0}
         html,body,#app{height: 100%;height:100%;}
@@ -10,11 +12,82 @@
         #app{color:#fff;font-size: x-large;}
         .header{height: 5rem;}
         .header p{    text-align: center;  font-size: 2rem;  margin-top: 1rem;}
-        #content{width: 80%;height: auto;border:1px dashed #cccccc;padding:20px;display: flex;flex-wrap:wrap;  margin: 0 auto;  }
+        #content{width: 80%;height: auto;border:1px dashed #cccccc;padding:20px; margin: 0 auto;  }
         .site div{background-color: rgb(26, 188, 156);border-radius: 50%;text-align: center;cursor: pointer;display: flex;  align-items: center;justify-content: center;margin: 0 auto;}
         .site{margin-bottom: 30px;}
         .site div:hover{transition: 0.3s; transform: scale(1.2) rotate(360deg);background-color: rgb(241, 196, 15)}
         .site div:active{transition: 0.3s; transform: scale(0.8) rotate(360deg);}
+        .pane{width:100%;display: flex;flex-wrap:wrap;}
+        .ani_previous{animation: 1s previous;    animation-fill-mode: forwards;}
+        .ani_next{animation: 1s next;    animation-fill-mode: forwards;}
+        .footer{text-align: center;margin-top:2rem}
+        .footer .yuan{background: rgba(255,255,255,.38);  border-radius: 50%;  display: inline-block;  width: 2rem;  height: 2rem;cursor: pointer;margin-left: 10px;}
+        .footer .yuan:hover{transition: 0.5s;transform: scale(1.2);}
+        .active{background: rgba(36, 95, 169, 0.9) !important ;transition: 0.5s;transform: scale(1.2);}
+        @keyframes previous {
+            50%{
+                -webkit-transform: translate(-1000px);
+                -moz-transform: translate(-1000px);
+                -ms-transform: translate(-1000px);
+                -o-transform: translate(-1000px);
+                transform: translate(-1000px)
+            }
+            51%{
+                opacity: 0.1;
+                display: none;
+            }
+            52%{
+                -webkit-transform: translate(1000px);
+                -moz-transform: translate(1000px);
+                -ms-transform: translate(1000px);
+                -o-transform: translate(1000px);
+                transform: translate(1000px)
+            }
+            53%{
+                display: block;
+                opacity: 0.1;
+            }
+            100%{
+                opacity: 1;
+                -webkit-transform: translate(0px);
+                -moz-transform: translate(0px);
+                -ms-transform: translate(0px);
+                -o-transform: translate(0px);
+                transform: translate(0px)
+            }
+        }
+        @keyframes next {
+            50%{
+                -webkit-transform: translate(1000px);
+                -moz-transform: translate(1000px);
+                -ms-transform: translate(1000px);
+                -o-transform: translate(1000px);
+                transform: translate(1000px)
+            }
+            51%{
+                opacity: 0.1;
+                display: none;
+            }
+            52%{
+                -webkit-transform: translate(-1000px);
+                -moz-transform: translate(-1000px);
+                -ms-transform: translate(-1000px);
+                -o-transform: translate(-1000px);
+                transform: translate(-1000px)
+            }
+            53%{
+                display: block;
+                opacity: 0.1;
+            }
+            100%{
+                opacity: 1;
+                -webkit-transform: translate(0px);
+                -moz-transform: translate(0px);
+                -ms-transform: translate(0px);
+                -o-transform: translate(0px);
+                transform: translate(0px)
+            }
+        }
     </style>
 </head>
 <body>
@@ -23,11 +96,16 @@
             <p>我的导航</p>
         </div>
         <div id="content">
-            <div v-for="item in siteData" class="site" :style="{width: websiteSize + 'px'}">
-                <div :style="{width: targetSize + 'px' , height:targetSize + 'px' }" @click="openUrl(item.url)">
-                    {{item.name}}
+            <div class="pane" :class="{ani_previous : aniPrevious , ani_next :  aniNext}">
+                <div v-for="item in siteData" class="site" :style="{width: websiteSize + 'px'}">
+                    <div :style="{width: targetSize + 'px' , height:targetSize + 'px' }" @click="openUrl(item.url)">
+                        {{item.name}}
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="footer">
+            <span class="yuan" :class="{active : index == item}" v-for="item in totalPage" @click="chosePage(item)">{{item}}</span>
         </div>
     </div>
 </body>
@@ -51,15 +129,61 @@
         {url : "http://web.36fy.com/" , name : "加速度"},
         {url : "https://translate.google.cn/" , name : "谷歌翻译"},
         {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
+        {url : "https://tinypng.com/" , name : "图片压缩"},
     ];
 
     var v = new Vue({
         el : "#app",
         data : {
-            index : 0, //当前第几页
+            index : 1, //当前第几页
+            totalPage : 0,//总共多少页
             siteData : [],//导航数据列表
             websiteSize: 20,//每个导航的像素
             targetSize : 20,
+            aniPrevious : false,
+            aniNext: false
         },
         methods : {
             computerSize : function(){
@@ -73,11 +197,46 @@
                 window.open(url);
             },
             computerData : function(){
+                console.log(this.index);
                 //计算第几页该有哪些数据
                 var total = size_x * size_y;
 
                 var data = getData(this.index,total);
                 this.siteData = data;
+                var totalPage = parseInt(window.siteData.length / total);
+                if( window.siteData.length % total > 0){
+                    totalPage++;
+                }
+                this.totalPage = totalPage;
+            },
+            previous : function(){
+                //上一页
+                if(this.index > 1){
+                    this.index--;
+                    this.computerData();
+                    this.aniPrevious = true;
+                    setTimeout(function(){
+                       v.aniPrevious = false;
+                    },1000)
+                }
+            },
+            next : function(){
+                //下一页
+                if(this.index < this.totalPage){
+                    this.index++;
+                    this.computerData();
+                    this.aniNext = true;
+                    setTimeout(function(){
+                        v.aniNext = false;
+                    },1000)
+                }
+            },
+            animition : function(){
+                //切换动画
+            },
+            chosePage : function(page){
+                this.index = page;
+                this.computerData();
             }
         },
         mounted : function(){
@@ -92,7 +251,7 @@
      * @param limit 每页几个
      */
     function getData(index,limit){
-        var beginSize = index * limit;
+        var beginSize = (index -1) * limit;
         var array = new Array();
         for(var i = 0 ; i < limit ; i ++){
             var _index = beginSize + i;
@@ -116,6 +275,31 @@
     window.onresize = function(){
         v.computerSize();
     };
+
+
+    window.onmousewheel = function(e){
+        if(e.deltaY > 0){
+            //向下
+            if(enableRool()){
+                v.next();
+            }
+        }else{
+            //向上
+            if(enableRool()){
+                v.previous();
+            }
+        }
+    }
+
+    var roolTime = new Date().getTime();
+    function enableRool(){
+        var now = new Date().getTime();
+        if(now - roolTime > 500){
+            roolTime = now;
+            return true;
+        }
+        return false;
+    }
 
 </script>
 </html>
