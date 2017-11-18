@@ -31,6 +31,7 @@
 <meta property="og:url" content="http://blog.xiaojiezhu/index.html">
 <meta property="og:site_name" content="朱小杰">
 <meta property="og:description" content="朱小杰的个人博客">
+<meta property="og:locale" content="zh-CN">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="朱小杰">
 <meta name="twitter:description" content="朱小杰的个人博客">
@@ -168,6 +169,61 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-浏览器鼠标滚轮事件"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-11-18 23:47:42" datetime="2017-11-18T15:47:42.000Z"  itemprop="datePublished">2017-11-18</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/前端/">前端</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/11/18/浏览器鼠标滚轮事件/">浏览器鼠标滚轮事件</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        监听浏览器的滚轮事件实现目标
+监听鼠标滚轮事件
+获取是向上滚动还是向下滚动
+处理鼠标的连续滚动
+
+
+笔者以谷歌浏览器亲试，谷歌内核的都可以火狐浏览器不行，ie浏览器也不行
+
+1.实现鼠标滚轮事件window.onmousewheel = function(e)&#123;    console.log(e);    if(e.deltaY &gt; 0)&#123;        //向下 ...
+    
+
+        <a href="/2017/11/18/浏览器鼠标滚轮事件/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/js/">js</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/事件/">事件</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-writeblog"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -256,55 +312,6 @@ Qu...
         </li>
     
         <li class="post-list-item fade">
-            <article id="post-spring-factorybean"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-11-13 00:00:00" datetime="2017-11-12T16:00:00.000Z"  itemprop="datePublished">2017-11-13</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring/">spring</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/11/13/spring-factorybean/">spring的factorybean</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        spring的factory是什么作用呢1FactoryBean
-可以让用户把任意bean注入到spring中
-
-    
-
-        <a href="/2017/11/13/spring-factorybean/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
             <article id="post-vue"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -334,8 +341,8 @@ Qu...
 
     
         #如何使用vue
-1234var v  = new Vue(&#123;	el :  "#app",	data : &#123;&#125;&#125;);
-1234&lt;html&gt;	&lt;head&gt;&lt;/head&gt;	&lt;body&gt;&lt;/body&gt;&lt;/html&gt;
+var v  = new Vue(&#123;	el :  "#app",	data : &#123;&#125;&#125;);
+&lt;html&gt;	&lt;head&gt;&lt;/head&gt;	&lt;body&gt;&lt;/body&gt;&lt;/html&gt;
     
 
         <a href="/2017/11/13/vue/" class="post-more waves-effect waves-button">
@@ -346,6 +353,55 @@ Qu...
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vue/">vue</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-spring-factorybean"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-11-13 00:00:00" datetime="2017-11-12T16:00:00.000Z"  itemprop="datePublished">2017-11-13</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring/">spring</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/11/13/spring-factorybean/">spring的factorybean</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        spring的factory是什么作用呢FactoryBean
+可以让用户把任意bean注入到spring中
+
+    
+
+        <a href="/2017/11/13/spring-factorybean/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li></ul>
 
     </div>
     
