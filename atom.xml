@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://blog.xiaojiezhu/"/>
-  <updated>2017-11-19T05:40:05.973Z</updated>
+  <updated>2017-11-19T15:17:55.280Z</updated>
   <id>http://blog.xiaojiezhu/</id>
   
   <author>
@@ -15,6 +15,62 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>spark运行时的版本问题</title>
+    <link href="http://blog.xiaojiezhu/2017/11/19/spark%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E7%89%88%E6%9C%AC%E9%97%AE%E9%A2%98/"/>
+    <id>http://blog.xiaojiezhu/2017/11/19/spark运行时的版本问题/</id>
+    <published>2017-11-19T15:00:43.000Z</published>
+    <updated>2017-11-19T15:17:55.280Z</updated>
+    
+    <content type="html"><![CDATA[<p>第一次运行的时候，报了这样的一个错误<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Exception in thread <span class="string">"main"</span> java.lang.NoSuchMethodError: scala.Predef$.refArrayOps([Ljava/lang/Object;)Lscala/collection/mutable/ArrayOps;</span><br><span class="line">at org.apache.spark.util.Utils$.getCallSite(Utils.scala:<span class="number">1440</span>)</span><br><span class="line">at org.apache.spark.SparkContext.&lt;init&gt;(SparkContext.scala:<span class="number">76</span>)</span><br><span class="line">at org.apache.spark.api.java.JavaSparkContext.&lt;init&gt;(JavaSparkContext.scala:<span class="number">58</span>)</span><br><span class="line">at com.xiaojiezhu.spark.rdd.wordcount.JavaWordCount.main(JavaWordCount.java:<span class="number">26</span>)</span><br></pre></td></tr></table></figure></p><figure class="image-bubble">                <div class="img-lightbox">                    <div class="overlay"></div>                    <img src="https://i.imgur.com/QlvAiyR.png" alt="" title="">                </div>                <div class="image-caption"></div>            </figure><p>报错的位置是<br><figure class="image-bubble">                <div class="img-lightbox">                    <div class="overlay"></div>                    <img src="https://i.imgur.com/R9p7FVR.png" alt="" title="">                </div>                <div class="image-caption"></div>            </figure></p><p>很奇怪，这一行为什么要报错呢</p><p><strong>原因是这样的</strong><br>spark的版本要与scala的版本一致才行，我们回头看一下spark的maven坐标</p><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.spark<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spark-core_2.10<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure><p>我们仔细看一下<code>artifactId</code>里面的属性，后面是带了一个版本号的<code>2.10</code>，这个版本号就是spark对应的scala版本，需要版本相对应才能正确运行</p><p>于是乎，我卸载了scala，在scala官网找到相应的2.10的版本重新安装，然后就好了</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;第一次运行的时候，报了这样的一个错误&lt;br&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;Exception in thread &lt;span class=
+      
+    
+    </summary>
+    
+      <category term="spark" scheme="http://blog.xiaojiezhu/categories/spark/"/>
+    
+    
+      <category term="spark问题" scheme="http://blog.xiaojiezhu/tags/spark%E9%97%AE%E9%A2%98/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>spark的wordcount</title>
+    <link href="http://blog.xiaojiezhu/2017/11/19/spark%E7%9A%84wordcount/"/>
+    <id>http://blog.xiaojiezhu/2017/11/19/spark的wordcount/</id>
+    <published>2017-11-19T12:52:49.000Z</published>
+    <updated>2017-11-19T15:18:08.052Z</updated>
+    
+    <content type="html"><![CDATA[<p>基本上学习大数据的第一个应用程序，都是一个wordcount程序，也就是统计一个文本里面出现的单词次数</p><blockquote><p>第一个wordcount以英文单词来演示，因为中文是以词语来切分才会有意思，如果中文切分词语，又要用到分词技术，分词并不是本文的重点，如果想要了解中文分词，请参考作者的另一篇文章<a href="http://www.cnblogs.com/zhuxiaojie/p/7224772.html" target="_blank" rel="external">hadoop的wordcount</a>，这里面有详细的中文分词，甚至统计了斗破苍穹这本小说哪些词语出现的最多，你们猜恐怖如斯出现了多少次呢</p></blockquote><h1 id="准备一个文本"><a href="#准备一个文本" class="headerlink" title="准备一个文本"></a>准备一个文本</h1><p>文本内容如下<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hello world</span><br><span class="line">hello jane</span><br><span class="line">hello jie</span><br><span class="line">hello kangkang</span><br><span class="line">fuck you</span><br><span class="line">i am god</span><br></pre></td></tr></table></figure></p><h1 id="wordcount的java实现"><a href="#wordcount的java实现" class="headerlink" title="wordcount的java实现"></a>wordcount的java实现</h1><h2 id="普通java代码的实现"><a href="#普通java代码的实现" class="headerlink" title="普通java代码的实现"></a>普通java代码的实现</h2><h2 id="lambda表达式的实现"><a href="#lambda表达式的实现" class="headerlink" title="lambda表达式的实现"></a>lambda表达式的实现</h2>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;基本上学习大数据的第一个应用程序，都是一个wordcount程序，也就是统计一个文本里面出现的单词次数&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;第一个wordcount以英文单词来演示，因为中文是以词语来切分才会有意思，如果中文切分词语，又要用到分词技术，分词并不是本文的重
+      
+    
+    </summary>
+    
+      <category term="spark" scheme="http://blog.xiaojiezhu/categories/spark/"/>
+    
+      <category term="大数据" scheme="http://blog.xiaojiezhu/categories/spark/%E5%A4%A7%E6%95%B0%E6%8D%AE/"/>
+    
+    
+      <category term="spark" scheme="http://blog.xiaojiezhu/tags/spark/"/>
+    
+      <category term="大数据" scheme="http://blog.xiaojiezhu/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/"/>
+    
+  </entry>
   
   <entry>
     <title>在开发工具中编写spark代码</title>
