@@ -213,7 +213,6 @@
                 //上一页
                 if(this.index > 1){
                     this.index--;
-                    this.computerData();
                     this.aniPrevious = true;
                     setTimeout(function(){
                        v.aniPrevious = false;
@@ -224,7 +223,6 @@
                 //下一页
                 if(this.index < this.totalPage){
                     this.index++;
-                    this.computerData();
                     this.aniNext = true;
                     setTimeout(function(){
                         v.aniNext = false;
@@ -236,12 +234,16 @@
             },
             chosePage : function(page){
                 this.index = page;
-                this.computerData();
             }
         },
         mounted : function(){
             this.computerSize();
             this.computerData();
+        },
+        watch : {
+            index : function(){
+                this.computerData();
+            }
         }
     });
 
@@ -278,6 +280,7 @@
 
 
     window.onmousewheel = function(e){
+        console.log(JSON.stringify(e));
         if(e.deltaY > 0){
             //向下
             if(enableRool()){
@@ -294,7 +297,7 @@
     var roolTime = new Date().getTime();
     function enableRool(){
         var now = new Date().getTime();
-        if(now - roolTime > 500){
+        if(now - roolTime > 1000){
             roolTime = now;
             return true;
         }
