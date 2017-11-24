@@ -18,25 +18,25 @@
     
     
     
-    <title>rdd的创建 | 朱小杰 | 朱小杰的个人博客</title>
+    <title>rdd的操作 | 朱小杰 | 朱小杰的个人博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <meta name="theme-color" content="#3F51B5">
     
     
     <meta name="keywords" content="spark,rdd">
-    <meta name="description" content="什么是rdd在学习之前，有必要介绍一下，什么是rdd  spark中的rdd是一个不可变的分布式对象集合，每个rdd都会被分为多个区，这些分区运行在不同的spark集群的不同节点上，rdd里面可以包含java,python,scala的对象  rdd的操作 rdd的操作分为行动操作和转换操作，行动操作会计算rdd生成一个结果，比如读取某一行的数据，而转换操作，会生成一个新的rdd，比如我要过滤一些">
+    <meta name="description" content="rdd是spark数据集合的操作对象，它有很多操作方法 转化操作再次要调试的是转化操作转换出来的rdd都是惰性的，只有第一次实际操作的时候，才会具体计算 过滤出满足条件的数据filter()">
 <meta name="keywords" content="spark,rdd">
 <meta property="og:type" content="article">
-<meta property="og:title" content="rdd的创建">
-<meta property="og:url" content="http://blog.xiaojiezhu/2017/11/22/rdd的创建/index.html">
+<meta property="og:title" content="rdd的操作">
+<meta property="og:url" content="http://blog.xiaojiezhu/2017/11/23/rdd的操作/index.html">
 <meta property="og:site_name" content="朱小杰">
-<meta property="og:description" content="什么是rdd在学习之前，有必要介绍一下，什么是rdd  spark中的rdd是一个不可变的分布式对象集合，每个rdd都会被分为多个区，这些分区运行在不同的spark集群的不同节点上，rdd里面可以包含java,python,scala的对象  rdd的操作 rdd的操作分为行动操作和转换操作，行动操作会计算rdd生成一个结果，比如读取某一行的数据，而转换操作，会生成一个新的rdd，比如我要过滤一些">
+<meta property="og:description" content="rdd是spark数据集合的操作对象，它有很多操作方法 转化操作再次要调试的是转化操作转换出来的rdd都是惰性的，只有第一次实际操作的时候，才会具体计算 过滤出满足条件的数据filter()">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-11-21T16:35:35.934Z">
+<meta property="og:updated_time" content="2017-11-22T16:10:58.989Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="rdd的创建">
-<meta name="twitter:description" content="什么是rdd在学习之前，有必要介绍一下，什么是rdd  spark中的rdd是一个不可变的分布式对象集合，每个rdd都会被分为多个区，这些分区运行在不同的spark集群的不同节点上，rdd里面可以包含java,python,scala的对象  rdd的操作 rdd的操作分为行动操作和转换操作，行动操作会计算rdd生成一个结果，比如读取某一行的数据，而转换操作，会生成一个新的rdd，比如我要过滤一些">
+<meta name="twitter:title" content="rdd的操作">
+<meta name="twitter:description" content="rdd是spark数据集合的操作对象，它有很多操作方法 转化操作再次要调试的是转化操作转换出来的rdd都是惰性的，只有第一次实际操作的时候，才会具体计算 过滤出满足条件的数据filter()">
     
         <link rel="alternate" type="application/atom+xml" title="朱小杰" href="/atom.xml">
     
@@ -131,7 +131,7 @@
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
         </a>
-        <div class="flex-col header-title ellipsis">rdd的创建</div>
+        <div class="flex-col header-title ellipsis">rdd的操作</div>
         
         <div class="search-wrap" id="search-wrap">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
@@ -153,11 +153,11 @@
 <header class="content-header post-header">
 
     <div class="container fade-scale">
-        <h1 class="title">rdd的创建</h1>
+        <h1 class="title">rdd的操作</h1>
         <h5 class="subtitle">
             
-                <time datetime="2017-11-21T16:18:36.000Z" itemprop="datePublished" class="page-time">
-  2017-11-22
+                <time datetime="2017-11-22T16:01:32.000Z" itemprop="datePublished" class="page-time">
+  2017-11-23
 </time>
 
 
@@ -178,17 +178,17 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#什么是rdd"><span class="post-toc-number">1.</span> <span class="post-toc-text">什么是rdd</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#rdd的操作"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">rdd的操作</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#创建rdd的方式"><span class="post-toc-number">2.</span> <span class="post-toc-text">创建rdd的方式</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#传入集合创建rdd"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">传入集合创建rdd</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#从外部加载数据"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">从外部加载数据</span></a></li></ol></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#转化操作"><span class="post-toc-number">1.</span> <span class="post-toc-text">转化操作</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#过滤出满足条件的数据filter"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">过滤出满足条件的数据filter()</span></a></li></ol></li></ol>
         </nav>
     </aside>
     
-<article id="post-rdd的创建"
+<article id="post-rdd的操作"
   class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
-        <h1 class="post-card-title">rdd的创建</h1>
+        <h1 class="post-card-title">rdd的操作</h1>
         <div class="post-meta">
-            <time class="post-time" title="2017-11-22 00:18:36" datetime="2017-11-21T16:18:36.000Z"  itemprop="datePublished">2017-11-22</time>
+            <time class="post-time" title="2017-11-23 00:01:32" datetime="2017-11-22T16:01:32.000Z"  itemprop="datePublished">2017-11-23</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spark/">spark</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spark/大数据/">大数据</a></li></ul></li></ul>
@@ -203,40 +203,21 @@
 
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h1 id="什么是rdd"><a href="#什么是rdd" class="headerlink" title="什么是rdd"></a>什么是rdd</h1><p>在学习之前，有必要介绍一下，什么是rdd</p>
-<blockquote>
-<p>spark中的rdd是一个不可变的分布式对象集合，每个rdd都会被分为多个区，这些分区运行在不同的spark集群的不同节点上，rdd里面可以包含java,python,scala的对象</p>
-</blockquote>
-<h2 id="rdd的操作"><a href="#rdd的操作" class="headerlink" title="rdd的操作"></a>rdd的操作</h2><blockquote>
-<p>rdd的操作分为行动操作和转换操作，行动操作会计算rdd生成一个结果，比如读取某一行的数据，而转换操作，会生成一个新的rdd，比如我要过滤一些信息</p>
-<p>rdd的创建是懒加载，也就是创建rdd的时候，并不会加载数据，而是真正运算rdd的时候，才会加载数据到rdd中</p>
-</blockquote>
-<h1 id="创建rdd的方式"><a href="#创建rdd的方式" class="headerlink" title="创建rdd的方式"></a>创建rdd的方式</h1><p>spark提供了两种创建rdd的方式，读取外部数据集，以及对一个rdd进行转换</p>
-<h2 id="传入集合创建rdd"><a href="#传入集合创建rdd" class="headerlink" title="传入集合创建rdd"></a>传入集合创建rdd</h2><p>最简单的方式是直接传入一个已有集合创建rdd</p>
-<blockquote>
-<p>这种情况很少见，spark是处理大数据应用，一般来说一台机器是放不下这么多数据的，这种情况多为开发阶段测试流程时使用。</p>
-</blockquote>
-<p><strong>java代码</strong><br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">JavaRDD&lt;String&gt; lines = sc.parallelize(Arrays.asList(<span class="string">"data1"</span>,<span class="string">"data2"</span>));</span><br></pre></td></tr></table></figure></p>
-<p><strong>scala代码</strong><br><figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="keyword">val</span> lines = sc.parallelize(<span class="type">List</span>(<span class="string">"data1"</span>,<span class="string">"data2"</span>));</span><br></pre></td></tr></table></figure></p>
-<h2 id="从外部加载数据"><a href="#从外部加载数据" class="headerlink" title="从外部加载数据"></a>从外部加载数据</h2><p>从外部加载数据是最常用的方式，可以从hive,hdfs等各种存储介质中加载，具体请看<a href="http://blog.xiaojiezhu.com" target="_blank" rel="external">加载外部rdd数据</a></p>
-<blockquote>
-<p>现在先从简单入手，先加载一个硬盘里面的文本文件吧</p>
-</blockquote>
-<p><strong>java代码</strong><br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">JavaRDD&lt;String&gt; lines = sc.textFile(<span class="string">"d:/data.txt"</span>);</span><br></pre></td></tr></table></figure></p>
-<p><strong>scala代码</strong><br><figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="keyword">val</span> lines = sc.textFile(<span class="string">"d:/data.txt"</span>);</span><br></pre></td></tr></table></figure></p>
-
+            <p>rdd是spark数据集合的操作对象，它有很多操作方法</p>
+<h1 id="转化操作"><a href="#转化操作" class="headerlink" title="转化操作"></a>转化操作</h1><p>再次要调试的是<strong>转化操作转换出来的rdd都是惰性的，只有第一次实际操作的时候，才会具体计算</strong></p>
+<h2 id="过滤出满足条件的数据filter"><a href="#过滤出满足条件的数据filter" class="headerlink" title="过滤出满足条件的数据filter()"></a>过滤出满足条件的数据<code>filter()</code></h2>
         </div>
 
         <blockquote class="post-copyright">
     <div class="content">
         
 <span class="post-time">
-    最后更新时间：<time datetime="2017-11-21T16:35:35.934Z" itemprop="dateUpdated">2017-11-22 00:35:35</time>
+    最后更新时间：<time datetime="2017-11-22T16:10:58.989Z" itemprop="dateUpdated">2017-11-23 00:10:58</time>
 </span><br>
 
 
         
-        <h3 style="color:red;text-align:center;margin-top:10px;">转载请注明作者与出处，否则追究其相关责任</h3> <p style="text-align:center;color:#2196f3;font-size:17px;">登陆github账号即可评论，如无法评论，请使用谷歌浏览器</p> <p style="text-align:center;font-size:16px;">朱小杰 ：<a href="/2017/11/22/rdd的创建/" target="_blank" rel="external">http://blog.xiaojiezhu/2017/11/22/rdd的创建/</a></p>
+        <h3 style="color:red;text-align:center;margin-top:10px;">转载请注明作者与出处，否则追究其相关责任</h3> <p style="text-align:center;color:#2196f3;font-size:17px;">登陆github账号即可评论，如无法评论，请使用谷歌浏览器</p> <p style="text-align:center;font-size:16px;">朱小杰 ：<a href="/2017/11/23/rdd的操作/" target="_blank" rel="external">http://blog.xiaojiezhu/2017/11/23/rdd的操作/</a></p>
         
     </div>
     <footer>
@@ -266,7 +247,7 @@
 <div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://blog.xiaojiezhu/2017/11/22/rdd的创建/&title=《rdd的创建》 — 朱小杰&pic=http://blog.xiaojiezhu/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://blog.xiaojiezhu/2017/11/23/rdd的操作/&title=《rdd的操作》 — 朱小杰&pic=http://blog.xiaojiezhu/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -276,22 +257,22 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://blog.xiaojiezhu/2017/11/22/rdd的创建/&title=《rdd的创建》 — 朱小杰&source=朱小杰的个人博客" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://blog.xiaojiezhu/2017/11/23/rdd的操作/&title=《rdd的操作》 — 朱小杰&source=朱小杰的个人博客" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.xiaojiezhu/2017/11/22/rdd的创建/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.xiaojiezhu/2017/11/23/rdd的操作/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《rdd的创建》 — 朱小杰&url=http://blog.xiaojiezhu/2017/11/22/rdd的创建/&via=http://blog.xiaojiezhu" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《rdd的操作》 — 朱小杰&url=http://blog.xiaojiezhu/2017/11/23/rdd的操作/&via=http://blog.xiaojiezhu" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://blog.xiaojiezhu/2017/11/22/rdd的创建/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://blog.xiaojiezhu/2017/11/23/rdd的操作/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -314,18 +295,18 @@
 <nav class="post-nav flex-row flex-justify-between">
   
     <div class="waves-block waves-effect prev">
-      <a href="/2017/11/23/rdd的操作/" id="post-prev" class="post-nav-link">
+      <a href="/2017/11/24/spring修改controller返回值，HandlerMethodReturnValueHandler/" id="post-prev" class="post-nav-link">
         <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">rdd的操作</h4>
+        <h4 class="title">spring修改controller返回值，HandlerMethodReturnValueHandler</h4>
       </a>
     </div>
   
 
   
     <div class="waves-block waves-effect next">
-      <a href="/2017/11/19/spark运行时的版本问题/" id="post-next" class="post-nav-link">
+      <a href="/2017/11/22/rdd的创建/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">spark运行时的版本问题</h4>
+        <h4 class="title">rdd的创建</h4>
       </a>
     </div>
   
@@ -433,7 +414,7 @@
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://blog.xiaojiezhu/2017/11/22/rdd的创建/&title=《rdd的创建》 — 朱小杰&pic=http://blog.xiaojiezhu/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://blog.xiaojiezhu/2017/11/23/rdd的操作/&title=《rdd的操作》 — 朱小杰&pic=http://blog.xiaojiezhu/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -443,22 +424,22 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://blog.xiaojiezhu/2017/11/22/rdd的创建/&title=《rdd的创建》 — 朱小杰&source=朱小杰的个人博客" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://blog.xiaojiezhu/2017/11/23/rdd的操作/&title=《rdd的操作》 — 朱小杰&source=朱小杰的个人博客" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.xiaojiezhu/2017/11/22/rdd的创建/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.xiaojiezhu/2017/11/23/rdd的操作/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《rdd的创建》 — 朱小杰&url=http://blog.xiaojiezhu/2017/11/22/rdd的创建/&via=http://blog.xiaojiezhu" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《rdd的操作》 — 朱小杰&url=http://blog.xiaojiezhu/2017/11/23/rdd的操作/&via=http://blog.xiaojiezhu" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://blog.xiaojiezhu/2017/11/22/rdd的创建/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://blog.xiaojiezhu/2017/11/23/rdd的操作/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -469,7 +450,7 @@
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJ0lEQVR42u3aQY7CMAwFUO5/aWY7SJPybbcjNX1dIQghLwuT2H694ud9+Pweczx+NefqnZMfDAyM2zLyJa6W0hsz2Y4/qBgYGA9grCLYakw1pFaXnq8NAwMD43jMarlJCE7GY2BgYJzFSObpLREDAwNjcrGsHgHzg+Dld3EMDIwbMvKs+/+/vqS+gYGBcSvGu/gk8+QFg8lKPubEwMDYmlG9oFZTab3ZeuvBwMDYmzFZbtIeMdma5NcxMDCewMgT95O017mNF8v/DQwMjE0Zx2E0CbW9K2s+W14uxcDA2I9RLVKem26bb9NH1hADA+NhjPwgmF9uq+DCPwYGBsbWjHObIapBOWEUtgkDA2NTRh4Qew0Zk9aNwrESAwNja0b1y5PEXB64k7A+KglgYGDcipEMrV5iq4e8Kr4pxsDA2IIxCbi9IFsthS4/xcDA2JqRpON7U1fT/XmY/lLlwMDA2I5Rbeo6XmjehNFDfmm2wMDA2JRxRWo+KQ/km1Ito2JgYOzKSAJoXrzMD3bRjuaBHgMD4zGMeVjsxfhqc1j5BoyBgbEd44oD4iTgFrpFMDAwtmO8i0/+A73jZi+ph4GBsTdjEuzy4JvPMGnOwMDA2JuRJ9EmTWD5BbUZcDEwMB7AqAa+6oU2OVzmoR8DAwNjkvqvNoH1ukKWSTcMDAyMcYjMkdV0HgYGxhMYZ7VczN9pFkExMDC2Zoyujq0x85Jns6iJgYFxP8YPDZFBzyvUukQAAAAASUVORK5CYII=" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACOUlEQVR42u3aQY4CMQxE0b7/pZstUpNQVQ5IcX6vEJMJeSyMY/u65Od+e+bvPP/6XKnvufiBAQPGtox7+ozWzI/+3N9do58NBgwY5zBGEWy0xg2pytekfO7wfRgwYMCYpmtKmHbDKwwYMGCsZSj7ZEeEAQMGDPcS614y3d3+dBeHAQPGhgy96v7/1z/pb8CAAWMrRhYu3bRPCZF34YEBA0ZvhntB1Utp+qHnX4e+AwwYMLoy5hfIVQNh9VGzL+eEAQPGMQx3eMK9cCo7u68/BFwYMGC0YyhlNXcgTA+1lWELuzoIAwaMFgy3ragHYve6qyeLXyZHYMCA0YKhJ4KVQ2TgeSviyg4KAwaMDRlZ4FvVDKjUyoZFNxgwYLRjKEGtXr53C3l2WgkDBozWDPfoWWFOTxyVFLDUEoABA8aGDGWpnqjpzYMKPhTDgAFjW0YlFLpjFlnz0h62gAEDRjuGUlBbNTrmluSM9gAMGDBaM9zEqz5OkY2RSY1VGDBgtGa4wxCVVDIL8e4nwoABox8jazG6h8sKbToYBgwYJzDc0pvegDTK+uZV9qr3S2HAgLEVI+wnRE1HZZgjnBaBAQNGO8ZtPvqh9f/KLrcwYMA4h1FJ1yo76Eln9gMAAwaMfgw3yOrFer1sZxfX3F8PGDBgtGBkgS+7srrFO2klDBgwYERtAOWCWhnggAEDBgy9WKaHyGyYVVoJAwaMAxjZsJd7rKzoJqWbMGDAaM2oXB0rAxP1sVcYMGAcwHgBmZSTYRPFKcIAAAAASUVORK5CYII=" alt="微信分享二维码">
 </div>
 
 

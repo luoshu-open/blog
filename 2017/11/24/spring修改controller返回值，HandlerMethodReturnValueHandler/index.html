@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+<!-- Baidu Tongji -->
+<script>var _hmt = _hmt || []</script>
+<script async src="//hm.baidu.com/hm.js?55393b3d866db991db75bbdbd0edf84f"></script>
+<!-- End Baidu Tongji -->
+
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>spring修改controller返回值，HandlerMethodReturnValueHandler | 朱小杰 | 朱小杰的个人博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="源码">
+    <meta name="description" content="产景分析spring自带的ResponseBody已经很好用了，但是还是有一些特殊情况不能满足，比如修改controller中的返回值  这个需求看上去可能有点奇怪，为什么要修改controller中的返回值呢，毕竟返回值是程序员设置好的，框架为什么要去修改它呢？  其实应用场景是有的。当我们定义一套标准的传输格式的时候，比如是这样的格式&amp;#123;    code : 0,    msg : &quot;">
+<meta name="keywords" content="源码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spring修改controller返回值，HandlerMethodReturnValueHandler">
+<meta property="og:url" content="http://blog.xiaojiezhu/2017/11/24/spring修改controller返回值，HandlerMethodReturnValueHandler/index.html">
+<meta property="og:site_name" content="朱小杰">
+<meta property="og:description" content="产景分析spring自带的ResponseBody已经很好用了，但是还是有一些特殊情况不能满足，比如修改controller中的返回值  这个需求看上去可能有点奇怪，为什么要修改controller中的返回值呢，毕竟返回值是程序员设置好的，框架为什么要去修改它呢？  其实应用场景是有的。当我们定义一套标准的传输格式的时候，比如是这样的格式&amp;#123;    code : 0,    msg : &quot;">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-11-24T14:42:07.124Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="spring修改controller返回值，HandlerMethodReturnValueHandler">
+<meta name="twitter:description" content="产景分析spring自带的ResponseBody已经很好用了，但是还是有一些特殊情况不能满足，比如修改controller中的返回值  这个需求看上去可能有点奇怪，为什么要修改controller中的返回值呢，毕竟返回值是程序员设置好的，框架为什么要去修改它呢？  其实应用场景是有的。当我们定义一套标准的传输格式的时候，比如是这样的格式&amp;#123;    code : 0,    msg : &quot;">
+    
+        <link rel="alternate" type="application/atom+xml" title="朱小杰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">朱小杰</h5>
+          <a href="mailto:zxjother@163.com" title="zxjother@163.com" class="mail">zxjother@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                历史文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                类别
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/yscoder" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/ysweb" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                测试
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">spring修改controller返回值，HandlerMethodReturnValueHandler</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">spring修改controller返回值，HandlerMethodReturnValueHandler</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-11-24T14:40:53.000Z" itemprop="datePublished" class="page-time">
+  2017-11-24
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/java/">java</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/java/springmvc/">springmvc</a></li></ul></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#产景分析"><span class="post-toc-number">1.</span> <span class="post-toc-text">产景分析</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#实现的三种方式"><span class="post-toc-number">2.</span> <span class="post-toc-text">实现的三种方式</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#调用一个方法返回数据"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">调用一个方法返回数据</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#尝试用动态代理-AOP，环绕通知修改返回值"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">尝试用动态代理/AOP，环绕通知修改返回值</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#自定义返回值解析器"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">自定义返回值解析器</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#HandlerMethodReturnValueHandler"><span class="post-toc-number">2.3.1.</span> <span class="post-toc-text">HandlerMethodReturnValueHandler</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一个简单的实现-rest不可用"><span class="post-toc-number">2.3.2.</span> <span class="post-toc-text">一个简单的实现(rest不可用)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#代码实现"><span class="post-toc-number">2.3.2.1.</span> <span class="post-toc-text">代码实现</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#代码配置"><span class="post-toc-number">2.3.2.2.</span> <span class="post-toc-text">代码配置</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#报错的结果"><span class="post-toc-number">2.3.3.</span> <span class="post-toc-text">报错的结果</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#源码分析问题"><span class="post-toc-number">2.3.4.</span> <span class="post-toc-text">源码分析问题</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#AsyncHandlerMethodReturnValueHandler的源码"><span class="post-toc-number">2.3.4.1.</span> <span class="post-toc-text">AsyncHandlerMethodReturnValueHandler的源码</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ResponseBody不能用了"><span class="post-toc-number">2.3.4.2.</span> <span class="post-toc-text">ResponseBody不能用了</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#controller返回值为void和String的情况"><span class="post-toc-number">2.3.4.3.</span> <span class="post-toc-text">controller返回值为void和String的情况</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#最终的实现办法"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">最终的实现办法</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-实现自己的自定义注解"><span class="post-toc-number">2.4.1.</span> <span class="post-toc-text">1.实现自己的自定义注解</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-实现自己的handler"><span class="post-toc-number">2.4.2.</span> <span class="post-toc-text">2.实现自己的handler</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-配置handler"><span class="post-toc-number">2.4.3.</span> <span class="post-toc-text">2.配置handler</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-编写controller测试"><span class="post-toc-number">2.4.4.</span> <span class="post-toc-text">3.编写controller测试</span></a></li></ol></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-spring修改controller返回值，HandlerMethodReturnValueHandler"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">spring修改controller返回值，HandlerMethodReturnValueHandler</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-11-24 22:40:53" datetime="2017-11-24T14:40:53.000Z"  itemprop="datePublished">2017-11-24</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/java/">java</a><ul class="article-category-list-child"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/java/springmvc/">springmvc</a></li></ul></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="产景分析"><a href="#产景分析" class="headerlink" title="产景分析"></a>产景分析</h1><p>spring自带的<code>ResponseBody</code>已经很好用了，但是还是有一些特殊情况不能满足，比如修改<code>controller</code>中的返回值</p>
+<blockquote>
+<p>这个需求看上去可能有点奇怪，为什么要修改<code>controller</code>中的返回值呢，毕竟返回值是程序员设置好的，框架为什么要去修改它呢？</p>
+</blockquote>
+<p>其实应用场景是有的。当我们定义一套标准的传输格式的时候，比如是这样的格式<br><figure class="highlight"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    code : 0,</span><br><span class="line">    msg : "请求成功",</span><br><span class="line">    data : &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p><code>code</code>代表着是否成功，<code>msg</code>接口调用失败后的信息，<code>data</code>封装返回的数据</p>
+</blockquote>
+<p>我们定义一组java的类型可能如下<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Result</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> code;</span><br><span class="line">    <span class="keyword">private</span> String msg;</span><br><span class="line">    <span class="keyword">private</span> Object data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>controller</code>中的代码则如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/findUser"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Result <span class="title">findPerson</span><span class="params">(@RequestParam(<span class="string">"userId"</span>)</span>String userId)</span>&#123;</span><br><span class="line">    Person p = userService.find(userId);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//这里封装返回数据结果</span></span><br><span class="line">    Result result = <span class="keyword">new</span> Result();</span><br><span class="line">    result.setCode(<span class="number">0</span>);</span><br><span class="line">    result.setMsg(<span class="string">"成功"</span>);</span><br><span class="line">    result.setData(p);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>得到的json数据如下<br><figure class="highlight"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    code : 0,</span><br><span class="line">    msg : "成功",</span><br><span class="line">    data : &#123;person数据&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>很多时候，我们不想写这些通用的代码，我们只想直接返回真实的数据回去，但是得到的返回值是一样的</strong></p>
+<p>这个时候，就需要框架来修改返回值了</p>
+<p>比如这个时候，我要写的代码可能就是这样了<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/findUser"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Person <span class="title">findPerson</span><span class="params">(@RequestParam(<span class="string">"userId"</span>)</span>String userId)</span>&#123;</span><br><span class="line">    Person p = userService.find(userId);</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>那么我们要怎么做才能达到这样的效果呢？</p>
+<h1 id="实现的三种方式"><a href="#实现的三种方式" class="headerlink" title="实现的三种方式"></a>实现的三种方式</h1><p><strong>最后一种方式推荐</strong></p>
+<h2 id="调用一个方法返回数据"><a href="#调用一个方法返回数据" class="headerlink" title="调用一个方法返回数据"></a>调用一个方法返回数据</h2><blockquote>
+<p>这是我之前使用的一个办法，因为没有找到别的办法，先使用了这种办法，但是后面发现有更简单的办法了</p>
+</blockquote>
+<p>我们定义一个父类<code>BaseController</code>，这里面有这样一些东西<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">response</span><span class="params">(Object object)</span></span>&#123;</span><br><span class="line">    HttpServletResponse response = HttpKit.getResponse();</span><br><span class="line">    response.setContentType(<span class="string">"application/json;charset=UTF-8"</span>);</span><br><span class="line">    PrintWriter writer = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">         writer = response.getWriter();</span><br><span class="line">         <span class="comment">//把得到的数据，包装到Resuest中返回</span></span><br><span class="line">        Result&lt;Object&gt; success = <span class="keyword">new</span> Result&lt;&gt;(<span class="number">0</span>, <span class="string">"SUCCESS"</span>, object);</span><br><span class="line">        writer.write(JSON.toJSONString(success));</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(writer != <span class="keyword">null</span>)&#123;</span><br><span class="line">            writer.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">response</span><span class="params">()</span></span>&#123;</span><br><span class="line">    response(<span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里面有两个方法，就是向客户端写数据流，然后包装返回数据，返回客户端</p>
+<blockquote>
+<p>这种方法能达到效果，但是就是需要开发人员去调用response()方法，而开发人员有的时候会忘记添加这个方法的时候，客户端就会没有返回值</p>
+</blockquote>
+<h2 id="尝试用动态代理-AOP，环绕通知修改返回值"><a href="#尝试用动态代理-AOP，环绕通知修改返回值" class="headerlink" title="尝试用动态代理/AOP，环绕通知修改返回值"></a>尝试用动态代理/AOP，环绕通知修改返回值</h2><p>答案是可行的，但是返回值必须全部写<code>Object</code><br>代码如下<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/findUser"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">findPerson</span><span class="params">(@RequestParam(<span class="string">"userId"</span>)</span>String userId)</span>&#123;</span><br><span class="line">    Person p = userService.find(userId);</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>切面的代码如下<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Pointcut</span>(<span class="string">"@annotation(org.springframework.web.bind.annotation.RequestMapping)"</span>)</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">params</span><span class="params">()</span></span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Around</span>(<span class="string">"params()"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">doBasicProfiling</span><span class="params">(ProceedingJoinPoint pjp)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Object obj = pjp.proceed();</span><br><span class="line">        <span class="comment">//包装返回值</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Result&lt;&gt;(<span class="number">0</span>,<span class="string">"success"</span>,obj);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable throwable) &#123;</span><br><span class="line">        throwable.printStackTrace();</span><br><span class="line">        String message = throwable.getMessage();</span><br><span class="line">        <span class="keyword">int</span> errorCode;</span><br><span class="line">        <span class="keyword">if</span>(throwable <span class="keyword">instanceof</span> PermissionException)&#123;</span><br><span class="line">            errorCode = ExceptionMappingUtil.getErrorCodeByException(PermissionException.class);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            errorCode = ExceptionMappingUtil.getErrorCodeByException(Throwable.class);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//包装异常返回值</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Result&lt;&gt;(errorCode,message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们重点说一下为什么要返回<code>Object</code>，动态代理中，我们可以修改其内容，比如一个<code>String</code>类型的<code>&quot;寒冰&quot;</code>我可以改成<code>&quot;德码&quot;</code>返回，但是我不能把字符串类型的寒冰，改成整数类型的<code>1</code>，也就意味着我能修改其返回内容，而不能修改其返回类型</p>
+<h2 id="自定义返回值解析器"><a href="#自定义返回值解析器" class="headerlink" title="自定义返回值解析器"></a>自定义返回值解析器</h2><p>这是最好的一个办法，修改SpringMvc的返回值处理器</p>
+<blockquote>
+<p>我们可以猜测到，像Spring这样的框架，里面的实现肯定是非常灵活的，他肯定是有自己的返回值处理器，而我们能不能定义自己的返回值处理器，并且替换掉SpringMvc所原有的呢？答案是可以的</p>
+</blockquote>
+<h3 id="HandlerMethodReturnValueHandler"><a href="#HandlerMethodReturnValueHandler" class="headerlink" title="HandlerMethodReturnValueHandler"></a>HandlerMethodReturnValueHandler</h3><p>实现<code>org.springframework.web.method.support.HandlerMethodReturnValueHandler</code>接口就行了</p>
+<p>从名字就可以看出，这是一个方法返回值的处理器，我们看看这个接口的定义<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//当前处理器是否支持此方法，只有返回true时才会进入到handlerReturnValue</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">supportsReturnType</span><span class="params">(MethodParameter returnType)</span></span>;</span><br><span class="line"><span class="comment">//处理返回值</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">handleReturnValue</span><span class="params">(Object returnValue, MethodParameter returnType,</span></span></span><br><span class="line"><span class="function"><span class="params">		ModelAndViewContainer mavContainer, NativeWebRequest webRequest)</span> <span class="keyword">throws</span> Exception</span>;</span><br></pre></td></tr></table></figure></p>
+<h3 id="一个简单的实现-rest不可用"><a href="#一个简单的实现-rest不可用" class="headerlink" title="一个简单的实现(rest不可用)"></a>一个简单的实现(rest不可用)</h3><p>为什么说rest请求不可用，马上我们就知道了</p>
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><p>我们写一段最简单的代码来实现它<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.core.MethodParameter;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.context.request.NativeWebRequest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.method.support.HandlerMethodReturnValueHandler;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.method.support.ModelAndViewContainer;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> zxj&lt;br&gt;</span></span><br><span class="line"><span class="comment"> * 时间 2017/11/23 19:36</span></span><br><span class="line"><span class="comment"> * 说明 ...</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReturnValueHandler</span> <span class="keyword">implements</span> <span class="title">HandlerMethodReturnValueHandler</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">supportsReturnType</span><span class="params">(MethodParameter returnType)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"supportsReturnType被调用..."</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleReturnValue</span><span class="params">(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer, NativeWebRequest webRequest)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"handleReturnValue被调用..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="代码配置"><a href="#代码配置" class="headerlink" title="代码配置"></a>代码配置</h4><p>然后写一段代码配置它到SpringMvc中<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.method.support.HandlerMethodReturnValueHandler;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> zxj&lt;br&gt;</span></span><br><span class="line"><span class="comment"> * 时间 2017/11/23 16:51</span></span><br><span class="line"><span class="comment"> * 说明 ...</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfiguration</span> <span class="keyword">extends</span> <span class="title">WebMvcConfigurerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addReturnValueHandlers</span><span class="params">(List&lt;HandlerMethodReturnValueHandler&gt; returnValueHandlers)</span> </span>&#123;</span><br><span class="line">        returnValueHandlers.add(<span class="keyword">new</span> ReturnValueHandler());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="报错的结果"><a href="#报错的结果" class="headerlink" title="报错的结果"></a>报错的结果</h3><p>然后我们请求一个rest接口，发现是404错误，<code>ReturnValueHandler</code>的两个println()方法没有一个调用，也就是说，刚才的代码没有用，或者说我们配置的代码根本就没有进去，哈哈哈！其实是我们还忽略了一些东西</p>
+<h3 id="源码分析问题"><a href="#源码分析问题" class="headerlink" title="源码分析问题"></a>源码分析问题</h3><p>我们看一下SpringMvc的源码，看是在哪里调用这个<code>HandlerMethodReturnValueHandler</code></p>
+<p><code>org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite</code>源码如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleReturnValue</span><span class="params">(Object returnValue, MethodParameter returnType,</span></span></span><br><span class="line"><span class="function"><span class="params">		ModelAndViewContainer mavContainer, NativeWebRequest webRequest)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="comment">//查找一个可用的handler</span></span><br><span class="line">	HandlerMethodReturnValueHandler handler = selectHandler(returnValue, returnType);</span><br><span class="line">	<span class="keyword">if</span> (handler == <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Unknown return value type: "</span> + returnType.getParameterType().getName());</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//重要：如果handler不为空，就调用handleReturnValue()方法</span></span><br><span class="line">	handler.handleReturnValue(returnValue, returnType, mavContainer, webRequest);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>我们可以想像，<code>HandlerMethodReturnValueHandler</code>最终只会处理一次，因为不可能一个<code>controller</code>的请求，会解析多次返回内容，所以肯定只会调用一次的，而刚才我们自定义的<code>HandlerMethodReturnValueHandler</code>肯定不是此次返回的结果。</p>
+</blockquote>
+<p>我们查看里面<code>selectHandler(returnValue, returnType);</code>的源码</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> HandlerMethodReturnValueHandler <span class="title">selectHandler</span><span class="params">(Object value, MethodParameter returnType)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">boolean</span> isAsyncValue = isAsyncReturnValue(value, returnType);</span><br><span class="line">	<span class="keyword">for</span> (HandlerMethodReturnValueHandler handler : <span class="keyword">this</span>.returnValueHandlers) &#123;</span><br><span class="line">		<span class="keyword">if</span> (isAsyncValue &amp;&amp; !(handler <span class="keyword">instanceof</span> AsyncHandlerMethodReturnValueHandler)) &#123;</span><br><span class="line">			<span class="keyword">continue</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (handler.supportsReturnType(returnType)) &#123;</span><br><span class="line">			<span class="keyword">return</span> handler;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>通过debug可以发现，在第一次的for循环中，就得到了返回的结果，返回的<code>handler</code>为<code>org.springframework.web.servlet.mvc.method.annotation.ModelAndViewMethodReturnValueHandler</code>，这个接口是用来返回视图的，然后视图解析器会去解析这个视图，如<code>jsp</code>,<code>fremarker</code>等</p>
+</blockquote>
+<p><strong>其实这个时候，我们就知道，为什么之前的接口会返回404了，因为我们返回的明明是rest接口的数据，而并不是一个视图接口啊</strong></p>
+<p>再从源码里面可以看到<code>boolean isAsyncValue</code>的值会影响到最终选取的结果，而刚才debug的结果中，该值是<code>true</code>，我们去看一下这个值是怎么计算的，再看一下源码</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isAsyncReturnValue</span><span class="params">(Object value, MethodParameter returnType)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (HandlerMethodReturnValueHandler handler : <span class="keyword">this</span>.returnValueHandlers) &#123;</span><br><span class="line">		<span class="keyword">if</span> (handler <span class="keyword">instanceof</span> AsyncHandlerMethodReturnValueHandler) &#123;</span><br><span class="line">			<span class="keyword">if</span> (((AsyncHandlerMethodReturnValueHandler) handler).isAsyncReturnValue(value, returnType)) &#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>if (handler instanceof AsyncHandlerMethodReturnValueHandler)</code>看到这行代码有没有一种恍然大悟的感觉呢？原来我们要实现这个接口啊<br><code>if(((AsyncHandlerMethodReturnValueHandler)handler).isAsyncReturnValue(value, returnType)) {return true;}</code>同时这段代码又是什么意思呢？其实就是继承这个接口所实现的方法了。</p>
+</blockquote>
+<h4 id="AsyncHandlerMethodReturnValueHandler的源码"><a href="#AsyncHandlerMethodReturnValueHandler的源码" class="headerlink" title="AsyncHandlerMethodReturnValueHandler的源码"></a>AsyncHandlerMethodReturnValueHandler的源码</h4><p>我们仔细看一下<code>org.springframework.web.method.support.AsyncHandlerMethodReturnValueHandler</code>的源码</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AsyncHandlerMethodReturnValueHandler</span> <span class="keyword">extends</span> <span class="title">HandlerMethodReturnValueHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Whether the given return value represents asynchronous computation.</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> returnValue the return value</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> returnType the return type</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@return</span> &#123;<span class="doctag">@code</span> true&#125; if the return value is asynchronous.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">isAsyncReturnValue</span><span class="params">(Object returnValue, MethodParameter returnType)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实这个接口也间接的继承了之前的<code>HandlerMethodReturnValueHandler</code>，那实际上我们继承这个接口，实现自己的方法解析器就行了</p>
+<p>如下<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> com.llc.platform.event.server.annotation.ResponseBody;</span><br><span class="line"><span class="keyword">import</span> org.springframework.core.MethodParameter;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.context.request.NativeWebRequest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.method.support.AsyncHandlerMethodReturnValueHandler;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.method.support.ModelAndViewContainer;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> zxj&lt;br&gt;</span></span><br><span class="line"><span class="comment"> * 时间 2017/11/23 16:48</span></span><br><span class="line"><span class="comment"> * 说明 ...</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HandlerValue</span> <span class="keyword">implements</span> <span class="title">AsyncHandlerMethodReturnValueHandler</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">supportsReturnType</span><span class="params">(MethodParameter returnType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> returnType.getMethodAnnotation(ResponseBody.class) != <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleReturnValue</span><span class="params">(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer, NativeWebRequest webRequest)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(returnValue);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isAsyncReturnValue</span><span class="params">(Object returnValue, MethodParameter returnType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> returnType.getMethodAnnotation(ResponseBody.class) != <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="ResponseBody不能用了"><a href="#ResponseBody不能用了" class="headerlink" title="ResponseBody不能用了"></a>ResponseBody不能用了</h4><blockquote>
+<p><strong>请注意，请注意，请注意</strong>，上面的<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">#### RequestResponseBodyMethodProcessor的源码</span><br><span class="line">不信我们看一下``org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor``的部分源码</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line">public class RequestResponseBodyMethodProcessor extends AbstractMessageConverterMethodProcessor &#123;</span><br><span class="line">    ...省略其它代码</span><br><span class="line">	@Override</span><br><span class="line">	public boolean supportsParameter(MethodParameter parameter) &#123;</span><br><span class="line">		return parameter.hasParameterAnnotation(RequestBody.class);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public boolean supportsReturnType(MethodParameter returnType) &#123;</span><br><span class="line">		return (AnnotatedElementUtils.hasAnnotation(returnType.getContainingClass(), ResponseBody.class) ||</span><br><span class="line">				returnType.hasMethodAnnotation(ResponseBody.class));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>这里很明显，如果有SpringMvc的<code>@ResponseBody</code>，就会使用<code>org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor</code></p>
+<h4 id="controller返回值为void和String的情况"><a href="#controller返回值为void和String的情况" class="headerlink" title="controller返回值为void和String的情况"></a>controller返回值为<code>void</code>和<code>String</code>的情况</h4><p>或者当返回值为<code>String</code>时,就会进入<code>org.springframework.web.servlet.mvc.method.annotation.ViewNameMethodReturnValueHandler</code>，我们看它的源码</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">supportsReturnType</span><span class="params">(MethodParameter returnType)</span> </span>&#123;</span><br><span class="line">	Class&lt;?&gt; paramType = returnType.getParameterType();</span><br><span class="line">	<span class="keyword">return</span> (<span class="keyword">void</span>.class == paramType || CharSequence.class.isAssignableFrom(paramType));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="最终的实现办法"><a href="#最终的实现办法" class="headerlink" title="最终的实现办法"></a>最终的实现办法</h2><ul>
+<li>必须实现<code>org.springframework.web.method.support.AsyncHandlerMethodReturnValueHandler</code></li>
+</ul>
+<blockquote>
+<p>不然会进入到别的handler中，具体查看spring的这段代码可以明白其逻辑<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleReturnValue</span><span class="params">(Object returnValue, MethodParameter returnType,</span></span></span><br><span class="line"><span class="function"><span class="params">		ModelAndViewContainer mavContainer, NativeWebRequest webRequest)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">	HandlerMethodReturnValueHandler handler = selectHandler(returnValue, returnType);</span><br><span class="line">	<span class="keyword">if</span> (handler == <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Unknown return value type: "</span> + returnType.getParameterType().getName());</span><br><span class="line">	&#125;</span><br><span class="line">	handler.handleReturnValue(returnValue, returnType, mavContainer, webRequest);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<ul>
+<li><p>不能用spring的<code>org.springframework.web.bind.annotation.ResponseBody</code>，同样的会被其它的handler给触发</p>
+</li>
+<li><h3 id="1-实现自己的自定义注解"><a href="#1-实现自己的自定义注解" class="headerlink" title="1.实现自己的自定义注解"></a>1.实现自己的自定义注解</h3></li>
+</ul>
+<p>我们根据这个注解来判断是否要进入我们自定义的handler</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.annotation.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> zxj&lt;br&gt;</span></span><br><span class="line"><span class="comment"> * 时间 2017/11/23 17:06</span></span><br><span class="line"><span class="comment"> * 说明 ...</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="meta">@Target</span>(ElementType.METHOD)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> ResponseBody &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>这个注解千万不要和sprnig的<code>ResponseBody</code>混在一起，如果担心混淆，那就换一个名字</strong></p>
+<ul>
+<li><h3 id="2-实现自己的handler"><a href="#2-实现自己的handler" class="headerlink" title="2.实现自己的handler"></a>2.实现自己的handler</h3></li>
+</ul>
+<p><strong>注意里面的ResponseBody，那是我们自已写的，千万不要用spring的</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;</span><br><span class="line"><span class="keyword">import</span> com.llc.platform.event.common.Result;</span><br><span class="line"><span class="keyword">import</span> com.llc.platform.event.server.core.annotation.ResponseBody;</span><br><span class="line"><span class="keyword">import</span> org.springframework.core.MethodParameter;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.context.request.NativeWebRequest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.method.support.AsyncHandlerMethodReturnValueHandler;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.method.support.ModelAndViewContainer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.PrintWriter;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> zxj&lt;br&gt;</span></span><br><span class="line"><span class="comment"> * 时间 2017/11/23 16:48</span></span><br><span class="line"><span class="comment"> * 说明 ...</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HandlerValue</span> <span class="keyword">implements</span> <span class="title">AsyncHandlerMethodReturnValueHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//返回true就被处理</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">supportsReturnType</span><span class="params">(MethodParameter returnType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> returnType.getMethodAnnotation(ResponseBody.class) != <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleReturnValue</span><span class="params">(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer, NativeWebRequest webRequest)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">//设置为已经完成该处理</span></span><br><span class="line">        mavContainer.setRequestHandled(<span class="keyword">true</span>);</span><br><span class="line">        HttpServletResponse response = (HttpServletResponse) webRequest.getNativeResponse();</span><br><span class="line">        response.setContentType(<span class="string">"application/json;charset=UTF-8"</span>);</span><br><span class="line">        PrintWriter writer = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            writer = response.getWriter();</span><br><span class="line">            <span class="comment">//把得到的数据，包装到Resuest中返回</span></span><br><span class="line">            Result&lt;Object&gt; success = <span class="keyword">new</span> Result&lt;&gt;(<span class="number">0</span>, <span class="string">"SUCCESS"</span>, returnValue);</span><br><span class="line">            writer.write(JSON.toJSONString(success));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>(writer != <span class="keyword">null</span>)&#123;</span><br><span class="line">                writer.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//返回true就被处理</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isAsyncReturnValue</span><span class="params">(Object returnValue, MethodParameter returnType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> r = returnType.getMethodAnnotation(ResponseBody.class) != <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">return</span> r;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><h3 id="2-配置handler"><a href="#2-配置handler" class="headerlink" title="2.配置handler"></a>2.配置handler</h3></li>
+</ul>
+<p>spring boot的配置<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfiguration</span> <span class="keyword">extends</span> <span class="title">WebMvcConfigurerAdapter</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addReturnValueHandlers</span><span class="params">(List&lt;HandlerMethodReturnValueHandler&gt; returnValueHandlers)</span> </span>&#123;</span><br><span class="line">        returnValueHandlers.add(<span class="keyword">new</span> HandlerValue());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><h3 id="3-编写controller测试"><a href="#3-编写controller测试" class="headerlink" title="3.编写controller测试"></a>3.编写controller测试</h3></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">receive</span><span class="params">()</span></span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"a"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/String"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">receive1</span><span class="params">()</span></span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"a"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"afa"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>经过测试，无论是<code>int</code>,<code>boolean</code>,<code>void</code>,<code>String</code>,<code>double</code>，都会被包装到<code>Result</code>的对象中，数据格式如下</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"code"</span>:<span class="number">0</span>,</span><br><span class="line">    <span class="attr">"msg"</span>:<span class="string">"SUCCESS"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"code"</span>:<span class="number">0</span>,</span><br><span class="line">    <span class="attr">"msg"</span>:<span class="string">"SUCCESS"</span>,</span><br><span class="line">    <span class="attr">"data"</span>:<span class="string">"string"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-11-24T14:42:07.124Z" itemprop="dateUpdated">2017-11-24 22:42:07</time>
+</span><br>
+
+
+        
+        <h3 style="color:red;text-align:center;margin-top:10px;">转载请注明作者与出处，否则追究其相关责任</h3> <p style="text-align:center;color:#2196f3;font-size:17px;">登陆github账号即可评论，如无法评论，请使用谷歌浏览器</p> <p style="text-align:center;font-size:16px;">朱小杰 ：<a href="/2017/11/24/spring修改controller返回值，HandlerMethodReturnValueHandler/" target="_blank" rel="external">http://blog.xiaojiezhu/2017/11/24/spring修改controller返回值，HandlerMethodReturnValueHandler/</a></p>
+        
+    </div>
+    <footer>
+        <a href="http://blog.xiaojiezhu">
+            <img src="/img/avatar.jpg" alt="朱小杰">
+            朱小杰
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/源码/">源码</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://blog.xiaojiezhu/2017/11/24/spring修改controller返回值，HandlerMethodReturnValueHandler/&title=《spring修改controller返回值，HandlerMethodReturnValueHandler》 — 朱小杰&pic=http://blog.xiaojiezhu/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://blog.xiaojiezhu/2017/11/24/spring修改controller返回值，HandlerMethodReturnValueHandler/&title=《spring修改controller返回值，HandlerMethodReturnValueHandler》 — 朱小杰&source=朱小杰的个人博客" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.xiaojiezhu/2017/11/24/spring修改controller返回值，HandlerMethodReturnValueHandler/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《spring修改controller返回值，HandlerMethodReturnValueHandler》 — 朱小杰&url=http://blog.xiaojiezhu/2017/11/24/spring修改controller返回值，HandlerMethodReturnValueHandler/&via=http://blog.xiaojiezhu" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://blog.xiaojiezhu/2017/11/24/spring修改controller返回值，HandlerMethodReturnValueHandler/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/11/23/rdd的操作/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">rdd的操作</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitment_thread"></div>
+    <link rel="stylesheet" href="//unpkg.com/gitment/style/default.css">
+    <script src="//unpkg.com/gitment/dist/gitment.browser.js"></script>
+    <script>
+        var gitment = new Gitment({
+            owner: 'zxj19951029',
+            repo: 'blog',
+            oauth: {
+                client_id: 'cec3aa1d71f4f85c1c07',
+                client_secret: '570b30296824c424d4db03c9fef8a1219a7a35f1',
+            },
+        })
+        gitment.render('comments')
+    </script>
+</section>
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>朱小杰 &copy; 2017</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://blog.xiaojiezhu/2017/11/24/spring修改controller返回值，HandlerMethodReturnValueHandler/&title=《spring修改controller返回值，HandlerMethodReturnValueHandler》 — 朱小杰&pic=http://blog.xiaojiezhu/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://blog.xiaojiezhu/2017/11/24/spring修改controller返回值，HandlerMethodReturnValueHandler/&title=《spring修改controller返回值，HandlerMethodReturnValueHandler》 — 朱小杰&source=朱小杰的个人博客" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.xiaojiezhu/2017/11/24/spring修改controller返回值，HandlerMethodReturnValueHandler/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《spring修改controller返回值，HandlerMethodReturnValueHandler》 — 朱小杰&url=http://blog.xiaojiezhu/2017/11/24/spring修改controller返回值，HandlerMethodReturnValueHandler/&via=http://blog.xiaojiezhu" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://blog.xiaojiezhu/2017/11/24/spring修改controller返回值，HandlerMethodReturnValueHandler/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADIUlEQVR42u3awW7rMAwEwP7/T7uXd3hAa3tJOkWkjE+FETsa5bAlqa+v+Dr+u37eP7tz/LjO3nz9+fwND1/Y2NjYi7CPy2vyxWfvyZHXGzd5FhsbG3s/dhItVXASY9ES4xAtrBMbGxv7g9nJEnsBlkcUNjY2NvZTAVbt2EzKmOvvwsbGxsZOmkrPPpVvWXL/hb00bGxs7Ldn54H0/n+/ZL6NjY2N/cbso3hVi4RqqZCE02T9/96AjY2NvRE7D4Dq4ZjeyCHfuGqZgY2Njb03O2/rVwex1Qisfnu1vYWNjY29K/t6ERNAMnCdHNzJBwnY2NjYu7LzeJiMY/NSIdn0SSsKGxsbez92tQzIS4UJo7etzaNC2NjY2Fuwm/v0ULS8YrNGp5CwsbGxl2L3BrTzVlG+TYXeWLwebGxs7J3YefN9cuwm2bJJkdM7yomNjY29BzunJuDqZlUb+tWi5XTrsbGxsTdiV0mTA5dJQ6oaognvJvCwsbGxF2dXm/XVMUMvtKrjgfLwABsbG3tTdq/p0xsD9Cawvbi6OayDjY2NvTj72cIgb9NPDgw99R5sbGzsndiT9k2vPEjGsfNuWSG6sLGxsRdn95C9wMtHwr1xRf4UNjY29h7sySA2P7iTfEsPnMdYYTyAjY2NvTh7/m993gCqtoryjbgZM2NjY2N/ALt6cKdXTiR/91Zy8xQ2Njb2B7CrUTTZiGq5Mnl/lNvY2NjYS7HzFs/f8HqFTaEIqXa2sLGxsRdkJ+E0ac3njGR8Wx0eY2NjY38a+6kyYN5s6pVGvcjExsbGXpE9OWSTh8p8uZOG1C+fxMbGxt6OPQfMSb32U3NUjI2Njb0du3dochJp86bVpKDCxsbG3oN9FK9qSZC3kJKtycOvWXthY2NjL8iuBsC85VRdYu9nqBZL2NjY2KuznwqtagT+ZVCV0xsbGxt7QXbedp8c8cnbUtWGV3kgjY2NjY0dFC15IJXHtHERcrpybGxsbOxWUTHvb1V/jJvZCDY2NvZG7B4gv5Nv7mQAnIccNjY29k7sXoMmf3W1kZQ/m5OaB3ewsbGx3539DWQ8NQAbo+RgAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '朱小杰';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '朱小杰';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
